@@ -1,6 +1,6 @@
 # cyberlog
 
-#What I've learned
+# What I've learned
 -> Native vs Cross-Platform
  -Native apps (Android → Kotlin/Java, iOS → Swift) are built separately for each platform, giving maximum performance but requiring two different codebases.
  -Cross-platform frameworks like Flutter, React Native, and Xamarin let developers use one codebase for multiple platforms, reducing development time and effort.
