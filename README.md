@@ -12,6 +12,7 @@
    Hot Reload instantly refreshes the UI after code changes without restarting the app, making development faster and more interactive . Flutter apps are built using a widget tree, where every element—text, buttons, layouts—is a widget.
 
  It provides:
+ 
  -StatelessWidget for static UI
  
  -StatefulWidget for dynamic, interactive UI
