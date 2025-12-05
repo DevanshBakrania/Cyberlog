@@ -1,6 +1,6 @@
 # cyberlog
 
-# What I've learned
+# What I've learned (Session 2)
 
 # Principles of JIT vs. AOT
 JIT (Just-In-Time) Compilation
