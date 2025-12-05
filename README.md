@@ -1,46 +1,41 @@
 # cyberlog
 
 # What I've learned
--> Native vs Cross-Platform
- -Native apps (Android → Kotlin/Java, iOS → Swift) are built separately for each platform, giving maximum performance but requiring two different codebases.
- -Cross-platform frameworks like Flutter, React Native, and Xamarin let developers use one codebase for multiple platforms, reducing development time and effort.
 
-->Why we use Flutter
-  Flutter uses Dart and allows building apps for Android, iOS, Web, Windows, macOS, and Linux from a single codebase.It uses the Skia rendering engine, which draws its own UI instead of relying on native components—giving smooth, consistent, high-FPS performance across devices.Its widget-based architecture makes UI creation extremely flexible and customizable.
+# Principles of JIT vs. AOT
+JIT (Just-In-Time) Compilation
 
-->Hot Reload & Widgets
-   Hot Reload instantly refreshes the UI after code changes without restarting the app, making development faster and more interactive . Flutter apps are built using a widget tree, where every element—text, buttons, layouts—is a widget.
+ -JIT compiles the Dart code while the app is running.
 
- It provides:
- 
- -StatelessWidget for static UI
- 
- -StatefulWidget for dynamic, interactive UI
+ -It makes development fast because it supports Hot Reload.
 
-# Steps to Install & Run Flutter App
+ -When you test your Even/Odd app in debug mode, Flutter uses JIT so changes in your code appear instantly.
 
-1. Download Flutter ZIP from the official website.
+AOT (Ahead-Of-Time) Compilation
 
-2. Unzip the folder anywhere on your PC.
+ -AOT compiles the Dart code before the app runs.
 
-3. Open the unzipped folder → go inside → copy the path of the bin folder.
+ -This gives better performance and faster startup time.
 
-4. Go to Environment Variables → Path → Add New → paste the bin path.
+ -When you build a release APK of your Even/Odd app, Flutter uses AOT so it runs smoothly on the device.
 
-5. Install Android Studio.
+# How I used Dart's Conditionals to perform the Even / Odd check
+In my app, I used an if–else statement to check whether the number is even or odd.
+I applied the modulus operator % to see if the number is divisible by 2:
 
-6. Inside Android Studio, install:
+if (number % 2 == 0) {
+  resultMessage = "The number $number is Even.";
+} else {
+  resultMessage = "The number $number is Odd.";
+}
 
-   -Android SDK
+If the remainder is 0, it’s even; otherwise, it’s odd.
 
-   -SDK Tools
+# String Interpolation
+I used Dart’s string interpolation ($variable) to display the result message.
+This allows me to insert the number directly inside the text:
 
-   -Android Virtual Device (AVD)
-
-7. Open Android Studio → Open Project → select your Flutter project folder.
-
-8. Select a Virtual Device (Emulator) and click Run.
+resultMessage = "The number $number is Even.";
 
 
-<img width="1080" height="2424" alt="image" src="https://github.com/user-attachments/assets/c7a96daf-f415-43a7-89f3-56f112a411cc" />
-
+It makes the message dynamic and easy to format.
