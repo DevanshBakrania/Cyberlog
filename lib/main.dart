@@ -1,55 +1,68 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const CyberLogApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class CyberLogApp extends StatelessWidget {
+  const CyberLogApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: CyberLogPage(),
+      title: "CyberLog",
+      home: const HomeScreen(),
     );
   }
 }
 
-class Log {
-  String action;
-  DateTime timestamp;
-  String status;
-
-  Log(this.action, this.timestamp, this.status);
-}
-
-class CyberLogPage extends StatelessWidget {
-  CyberLogPage({super.key});
-
-  final List<Log> logs = [
-    Log("Login Attempt", DateTime.now(), "Success"),
-    Log("Password Change", DateTime.now(), "Failed"),
-    Log("File Download", DateTime.now(), "Success"),
-    Log("Unauthorized Access", DateTime.now(), "Blocked"),
-  ];
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Cyber Logs")),
+      appBar: AppBar(
+        title: const Text("CyberLog"),
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: logs.map((log) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Text(
-                "${log.action}   |   ${log.timestamp.toLocal().toString().split(".")[0]}   |   ${log.status}",
-                style: const TextStyle(fontSize: 18),
+          children: [
+            const Text(
+              "Home Dashboard !!",
+              style: TextStyle(fontSize: 25),
+            ),
+
+            const SizedBox(height: 10),
+
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade100,
               ),
-            );
-          }).toList(),
+              child: const Text(
+                "View Logs",
+                style: TextStyle(fontSize: 20),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.green.shade100,
+              ),
+              child: const Text(
+                "System Status",
+                style: TextStyle(fontSize: 20),
+              ),
+            ),
+          ],
         ),
       ),
     );
