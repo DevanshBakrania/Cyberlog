@@ -27,7 +27,6 @@ It provides:
 7. Open Android Studio → Open Project → select your Flutter project folder.
 8. Select a Virtual Device (Emulator) and click Run.
 
-Ex.
 ![fedd3748-fd4b-4487-94cd-741847b60e35](https://github.com/user-attachments/assets/68aab05b-dac7-4b23-b6e4-df5811110238)
 
 
@@ -81,6 +80,9 @@ resultMessage = "The number $number is Even.";
 
 It makes the message dynamic and easy to format.
 
+![ddbe66e1-7e52-4511-89e2-7c2dddbc1728](https://github.com/user-attachments/assets/c1b261a7-0a00-4ff7-9aec-652116d8947f)
+
+
 ---
 
 ## Session 3
@@ -109,6 +111,9 @@ logs.map((log) => Text("${log.action} | ${log.timestamp.toLocal().toString().spl
 ```
 
 Here I’ve used `.toLocal().toString().split(".")[0]` which formats the timestamp to **avoid milliseconds**, making it more readable. 
+
+<img width="1344" height="2992" alt="Screenshot_20251212_173637" src="https://github.com/user-attachments/assets/4d3fb05e-e9f0-4283-9d4c-ba61d4dca819" />
+
 
 ---
 
