@@ -27,6 +27,10 @@ It provides:
 7. Open Android Studio → Open Project → select your Flutter project folder.
 8. Select a Virtual Device (Emulator) and click Run.
 
+Ex.
+![fedd3748-fd4b-4487-94cd-741847b60e35](https://github.com/user-attachments/assets/68aab05b-dac7-4b23-b6e4-df5811110238)
+
+
 ---
 
 ## Session 2
