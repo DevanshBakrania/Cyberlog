@@ -112,7 +112,7 @@ logs.map((log) => Text("${log.action} | ${log.timestamp.toLocal().toString().spl
 
 Here I’ve used `.toLocal().toString().split(".")[0]` which formats the timestamp to **avoid milliseconds**, making it more readable. 
 
-<img width="1344" height="2992" alt="Screenshot_20251212_173637" src="https://github.com/user-attachments/assets/4d3fb05e-e9f0-4283-9d4c-ba61d4dca819" />
+<img width="1000" height="2500" alt="Screenshot_20251212_173637" src="https://github.com/user-attachments/assets/4d3fb05e-e9f0-4283-9d4c-ba61d4dca819" />
 
 
 ---
