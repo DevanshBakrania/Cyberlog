@@ -53,7 +53,7 @@ In my app, I used an `if–else` statement to check whether the number is even o
 
 I applied the modulus operator `%` to see if the number is divisible by 2:
 
-```dart
+```
 if (number % 2 == 0) {
   resultMessage = "The number $number is Even.";
 } else {
@@ -71,7 +71,7 @@ I used Dart’s string interpolation (`$variable`) to display the result message
 
 This allows me to insert the number directly inside the text:
 
-```dart
+```
 resultMessage = "The number $number is Even.";
 ```
 
@@ -85,13 +85,13 @@ What I’ve learned
 
 I created a **`Log` class** to organize each log entry, storing the action performed, the timestamp of the action, and its status (e.g., `"Success"`, `"Failed"`, `"Blocked"`). For example:
 
-```dart
+```
 Log("Login Attempt", DateTime.now(), "Success")
 ```
 
 represents a single log entry. Multiple logs are stored in a **`List<Log>`**, which allows us to manage and add new entries easily:
 
-```dart
+```
 final List<Log> logs = [
   Log("Login Attempt", DateTime.now(), "Success"),
   Log("Password Change", DateTime.now(), "Failed"),
@@ -100,7 +100,7 @@ final List<Log> logs = [
 
 In the UI, we use **list iteration (`map`)** to dynamically generate a widget for each log, displaying its details automatically:
 
-```dart
+```
 logs.map((log) => Text("${log.action} | ${log.timestamp.toLocal().toString().split(".")[0]} | ${log.status}")).toList()
 ```
 
