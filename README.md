@@ -122,8 +122,6 @@ Here I’ve used `.toLocal().toString().split(".")[0]` which formats the timesta
 
 ---
 
----
-
 ## Session 4
 
 What I’ve learned
@@ -156,8 +154,6 @@ Scaffold
 ```
 
 <img width="700" height="2000" alt="Screenshot_20251211_164542" src="https://github.com/user-attachments/assets/a7dabe91-cbe9-4a01-818a-bceb7c6ca6f1" />
-
----
 
 ---
 
