@@ -160,3 +160,32 @@ Scaffold
 ## Session 5
 
 What I’ve learned
+
+In this project, I built a CyberLog Dashboard using Flutter’s core layout widgets: Scaffold, AppBar, GridView, Container, Column, and Text. The dashboard displays four cards — Daily Log, Cyber Tips, Device Security, and Notes — arranged in a two-column layout using GridView.count, making the UI responsive, evenly spaced, and visually balanced.
+
+Key properties used in the layout include:
+
+-crossAxisCount: 2 → creates 2 columns
+
+-childAspectRatio: 1 → ensures the cards are roughly square
+
+-margin and padding → provide spacing around and inside each card
+
+Each card is a Container with BoxDecoration, giving it a background color, rounded corners, and soft shadow, making the UI professional and visually appealing. Inside the Container, a Column is used to vertically center the icon and title, similar to how Column stacks widgets in login forms or profile screens.
+
+By keeping the card titles in a list, the layout becomes data-driven, meaning we can change or add cards without modifying the UI. This demonstrates separation of data and UI, a principle used in real-world Flutter apps.
+
+In this session I learned how to:
+
+-Use GridView for multi-column layouts like dashboards and Instagram grids
+
+-Style cards professionally with Container + BoxDecoration
+
+-Organize content vertically using Column
+
+-Apply spacing and alignment using padding, margin, and childAspectRatio
+
+-Build a responsive, reusable, and data-driven UI in Flutter
+
+<img width="700" height="2000" alt="Screenshot_20251212_180142" src="https://github.com/user-attachments/assets/aac0e726-11bc-4eba-85e0-186e1dd3d2ef" />
+
