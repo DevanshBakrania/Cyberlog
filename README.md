@@ -29,8 +29,9 @@ It provides:
 7. Open Android Studio → Open Project → select your Flutter project folder.
 8. Select a Virtual Device (Emulator) and click Run.
 
-![fedd3748-fd4b-4487-94cd-741847b60e35](https://github.com/user-attachments/assets/68aab05b-dac7-4b23-b6e4-df5811110238)
+---
 
+![fedd3748-fd4b-4487-94cd-741847b60e35](https://github.com/user-attachments/assets/68aab05b-dac7-4b23-b6e4-df5811110238)
 
 ---
 
@@ -82,8 +83,9 @@ resultMessage = "The number $number is Even.";
 
 It makes the message dynamic and easy to format.
 
-![ddbe66e1-7e52-4511-89e2-7c2dddbc1728](https://github.com/user-attachments/assets/c1b261a7-0a00-4ff7-9aec-652116d8947f)
+---
 
+![ddbe66e1-7e52-4511-89e2-7c2dddbc1728](https://github.com/user-attachments/assets/c1b261a7-0a00-4ff7-9aec-652116d8947f)
 
 ---
 
@@ -114,8 +116,9 @@ logs.map((log) => Text("${log.action} | ${log.timestamp.toLocal().toString().spl
 
 Here I’ve used `.toLocal().toString().split(".")[0]` which formats the timestamp to **avoid milliseconds**, making it more readable. 
 
-<img width="700" height="2000" alt="Screenshot_20251212_173637" src="https://github.com/user-attachments/assets/4d3fb05e-e9f0-4283-9d4c-ba61d4dca819" />
+---
 
+<img width="700" height="2000" alt="Screenshot_20251212_173637" src="https://github.com/user-attachments/assets/4d3fb05e-e9f0-4283-9d4c-ba61d4dca819" />
 
 ---
 
@@ -154,7 +157,6 @@ Scaffold
 
 <img width="700" height="2000" alt="Screenshot_20251211_164542" src="https://github.com/user-attachments/assets/a7dabe91-cbe9-4a01-818a-bceb7c6ca6f1" />
 
-
 ---
 
 ---
@@ -189,5 +191,8 @@ In this session I learned how to:
 
 -Build a responsive, reusable, and data-driven UI in Flutter
 
+---
+
 <img width="700" height="2000" alt="Screenshot_20251212_180142" src="https://github.com/user-attachments/assets/aac0e726-11bc-4eba-85e0-186e1dd3d2ef" />
 
+---
