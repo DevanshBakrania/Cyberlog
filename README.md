@@ -123,6 +123,32 @@ Here I’ve used `.toLocal().toString().split(".")[0]` which formats the timesta
 
 What I’ve learned
 
+Flutter UI is built using widgets, and literally everything on the screen is a widget.
+Widgets are arranged in a widget tree, where big widgets contain smaller ones (like LEGO blocks).
+
+Flutter has two types of widgets:
+
+StatelessWidget → UI that never changes
+
+StatefulWidget → UI that updates using setState()
+
+For example:
+A StatelessWidget is used for fixed text or headers.
+A StatefulWidget is used when the screen must change, like counters, buttons, or inputs.
+
+We use Scaffold to build the main screen structure (AppBar + Body).
+Inside the body, layout widgets like Column, Row, and SizedBox help arrange elements neatly.
+
+Example structure:
+
+Scaffold
+ ├─ AppBar
+ └─ Body
+     └─ Column
+          ├─ Text
+          ├─ SizedBox
+          └─ Button
+
 <img width="700" height="2000" alt="Screenshot_20251211_164542" src="https://github.com/user-attachments/assets/a7dabe91-cbe9-4a01-818a-bceb7c6ca6f1" />
 
 
