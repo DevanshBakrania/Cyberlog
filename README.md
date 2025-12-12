@@ -140,20 +140,15 @@ We use Scaffold to build the main screen structure (AppBar + Body).
 Inside the body, layout widgets like Column, Row, and SizedBox help arrange elements neatly.
 
 Example structure:
-
+```
 Scaffold
-
  ├─ AppBar
-
  └─ Body
-  
      └─ Column
-     
-          ├─ Text
-          
-          ├─ SizedBox
-          
+          ├─ Text 
+          ├─ SizedBox  
           └─ Button
+```
 
 <img width="700" height="2000" alt="Screenshot_20251211_164542" src="https://github.com/user-attachments/assets/a7dabe91-cbe9-4a01-818a-bceb7c6ca6f1" />
 
