@@ -4,9 +4,9 @@
 
 **What I've learned**
 
-- > Native vs Cross-Platform -Native apps (Android → Kotlin/Java, iOS → Swift) are built separately for each platform, giving maximum performance but requiring two different codebases. -Cross-platform frameworks like Flutter, React Native, and Xamarin let developers use one codebase for multiple platforms, reducing development time and effort.
-- >Why we use Flutter Flutter uses Dart and allows building apps for Android, iOS, Web, Windows, macOS, and Linux from a single codebase.It uses the Skia rendering engine, which draws its own UI instead of relying on native components—giving smooth, consistent, high-FPS performance across devices.Its widget-based architecture makes UI creation extremely flexible and customizable.
-- >Hot Reload & Widgets Hot Reload instantly refreshes the UI after code changes without restarting the app, making development faster and more interactive . Flutter apps are built using a widget tree, where every element—text, buttons, layouts—is a widget.
+-> Native vs Cross-Platform -Native apps (Android → Kotlin/Java, iOS → Swift) are built separately for each platform, giving maximum performance but requiring two different codebases. -Cross-platform frameworks like Flutter, React Native, and Xamarin let developers use one codebase for multiple platforms, reducing development time and effort.
+->Why we use Flutter Flutter uses Dart and allows building apps for Android, iOS, Web, Windows, macOS, and Linux from a single codebase.It uses the Skia rendering engine, which draws its own UI instead of relying on native components—giving smooth, consistent, high-FPS performance across devices.Its widget-based architecture makes UI creation extremely flexible and customizable.
+->Hot Reload & Widgets Hot Reload instantly refreshes the UI after code changes without restarting the app, making development faster and more interactive . Flutter apps are built using a widget tree, where every element—text, buttons, layouts—is a widget.
 
 It provides:
 
