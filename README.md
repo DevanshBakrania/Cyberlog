@@ -202,3 +202,12 @@ CyberLog is a Flutter-based dashboard application designed to demonstrate core U
 This project is built using Flutter and Dart with Material Design 3. It uses essential Flutter widgets such as MaterialApp, Scaffold, AppBar, Column, ListView, Card, ListTile, and SwitchListTile. Global theming is applied using ThemeData and ColorScheme to maintain a consistent and modern UI throughout the application.
 
 Through this project, I learned how to structure a Flutter app using StatelessWidget and StatefulWidget, manage UI state using setState, implement bottom navigation, and apply global themes for better design consistency. This project helped strengthen my understanding of Flutter UI fundamentals and serves as a strong foundation for future feature enhancements.
+
+---
+
+<img width="700" height="2000" alt="Screenshot_20251215_170244" src="https://github.com/user-attachments/assets/6044164d-7dff-405b-9953-adcbf2717af5" /> <img width="700" height="2000" alt="Screenshot_20251215_170258" src="https://github.com/user-attachments/assets/29160a87-5e1d-4816-8c04-d83039d847be" /> <img width="700" height="2000" alt="Screenshot_20251215_170325" src="https://github.com/user-attachments/assets/537cc8cd-7fa6-4933-9f11-db09ce38a68c" />
+
+
+
+
+---
