@@ -192,3 +192,13 @@ In this session I learned how to:
 <img width="700" height="2000" alt="Screenshot_20251212_180142" src="https://github.com/user-attachments/assets/aac0e726-11bc-4eba-85e0-186e1dd3d2ef" />
 
 ---
+
+## Session 6
+
+What I've learned
+
+CyberLog is a Flutter-based dashboard application designed to demonstrate core UI concepts, navigation, and theming in Flutter. The app uses a BottomNavigationBar to switch between three main screens: Home, Logs, and Settings. The Home screen displays system status using card-based widgets, the Logs screen shows recent activity logs, and the Settings screen provides basic toggle options.
+
+This project is built using Flutter and Dart with Material Design 3. It uses essential Flutter widgets such as MaterialApp, Scaffold, AppBar, Column, ListView, Card, ListTile, and SwitchListTile. Global theming is applied using ThemeData and ColorScheme to maintain a consistent and modern UI throughout the application.
+
+Through this project, I learned how to structure a Flutter app using StatelessWidget and StatefulWidget, manage UI state using setState, implement bottom navigation, and apply global themes for better design consistency. This project helped strengthen my understanding of Flutter UI fundamentals and serves as a strong foundation for future feature enhancements.
