@@ -205,9 +205,8 @@ Through this project, I learned how to structure a Flutter app using StatelessWi
 
 ---
 
-<img width="700" height="2000" alt="Screenshot_20251215_170244" src="https://github.com/user-attachments/assets/6044164d-7dff-405b-9953-adcbf2717af5" /> <img width="700" height="2000" alt="Screenshot_20251215_170258" src="https://github.com/user-attachments/assets/29160a87-5e1d-4816-8c04-d83039d847be" /> <img width="700" height="2000" alt="Screenshot_20251215_170325" src="https://github.com/user-attachments/assets/537cc8cd-7fa6-4933-9f11-db09ce38a68c" />
-
-
-
+<img width="700" height="2000" alt="Screenshot_20251215_170244" src="https://github.com/user-attachments/assets/6044164d-7dff-405b-9953-adcbf2717af5" /> 
+<img width="700" height="2000" alt="Screenshot_20251215_170258" src="https://github.com/user-attachments/assets/29160a87-5e1d-4816-8c04-d83039d847be" /> 
+<img width="700" height="2000" alt="Screenshot_20251215_170325" src="https://github.com/user-attachments/assets/537cc8cd-7fa6-4933-9f11-db09ce38a68c" />
 
 ---
