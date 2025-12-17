@@ -1,202 +1,238 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const CyberLogApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => LogProvider()),
+        ChangeNotifierProvider(create: (_) => SettingsProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
-class CyberLogApp extends StatelessWidget {
-  const CyberLogApp({super.key});
+class Log {
+  final String action;
+  final DateTime time;
+  final String status;
+
+  Log(this.action, this.time, this.status);
+}
+
+class LogProvider extends ChangeNotifier {
+  final List<Log> _logs = [];
+
+  List<Log> get logs => _logs;
+
+  void addLog(String action, String status) {
+    _logs.add(Log(action, DateTime.now(), status));
+    notifyListeners();
+  }
+
+  void clearLogs() {
+    _logs.clear();
+    notifyListeners();
+  }
+}
+
+class SettingsProvider extends ChangeNotifier {
+  bool isDarkMode = false;
+  String defaultStatus = "Success";
+
+  void toggleTheme() {
+    isDarkMode = !isDarkMode;
+    notifyListeners();
+  }
+
+  void setDefaultStatus(String status) {
+    defaultStatus = status;
+    notifyListeners();
+  }
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'CyberLog',
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.indigo,
-        ),
-        appBarTheme: const AppBarTheme(
-          centerTitle: true,
-          backgroundColor: Colors.indigo,
-          foregroundColor: Colors.white,
-        ),
-        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          selectedItemColor: Colors.indigo,
-          unselectedItemColor: Colors.grey,
-        ),
-      ),
-
-      home: const DashboardScreen(),
+    return Consumer<SettingsProvider>(
+      builder: (context, settings, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'CyberLog',
+          theme: ThemeData(
+            brightness:
+            settings.isDarkMode ? Brightness.dark : Brightness.light,
+            useMaterial3: true,
+          ),
+          home: const CyberLogScreen(),
+        );
+      },
     );
   }
 }
 
-class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+class CyberLogScreen extends StatefulWidget {
+  const CyberLogScreen({super.key});
 
   @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
+  State<CyberLogScreen> createState() => _CyberLogScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
-  int currentIndex = 0;
-
-  final List<Widget> screens = [
-    const HomeScreen(),
-    const LogsScreen(),
-    const SettingsScreen(),
-  ];
+class _CyberLogScreenState extends State<CyberLogScreen> {
+  String? selectedStatus;
 
   @override
   Widget build(BuildContext context) {
+    final settings = Provider.of<SettingsProvider>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('CyberLog'),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.indigo, Colors.blue],
-            ),
+        title: const Text("CyberLog Dashboard"),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const SettingsScreen()));
+            },
           ),
-        ),
+          IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: () {
+              Provider.of<LogProvider>(context, listen: false).clearLogs();
+            },
+          ),
+        ],
       ),
 
-      body: screens[currentIndex],
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: ["Success", "Failed", "Blocked"].map((status) {
+                final isSelected = selectedStatus == status;
+                return ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      selectedStatus = status;
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: isSelected ? Colors.blue : Colors.grey),
+                  child: Text(status),
+                );
+              }).toList(),
+            ),
+          ),
 
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
-        onTap: (index) {
+          Expanded(
+            child: Consumer<LogProvider>(
+              builder: (context, logProvider, child) {
+                if (logProvider.logs.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      "No logs available",
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  );
+                }
+
+                return ListView.builder(
+                  itemCount: logProvider.logs.length,
+                  itemBuilder: (context, index) {
+                    final log = logProvider.logs[index];
+
+                    return Card(
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
+                      child: ListTile(
+                        leading: const Icon(Icons.security),
+                        title: Text(log.action),
+                        subtitle: Text(
+                            "${log.status} • ${log.time.hour}:${log.time.minute.toString().padLeft(2, '0')}"),
+                        trailing: Icon(
+                          log.status == "Success"
+                              ? Icons.check_circle
+                              : log.status == "Blocked"
+                              ? Icons.block
+                              : Icons.error,
+                          color: log.status == "Success"
+                              ? Colors.lightGreen
+                              : log.status == "Blocked"
+                              ? Colors.orangeAccent
+                              : Colors.redAccent
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          final logStatus =
+              selectedStatus ?? settings.defaultStatus;
+          Provider.of<LogProvider>(context, listen: false)
+              .addLog("Security Scan", logStatus);
           setState(() {
-            currentIndex = index;
+            selectedStatus = null;
           });
         },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Logs',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
+        child: const Icon(Icons.add),
       ),
     );
   }
 }
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: const [
-          Card(
-            elevation: 4,
-            child: ListTile(
-              leading: Icon(Icons.security, color: Colors.green),
-              title: Text('Security Status'),
-              subtitle: Text('All systems are secure'),
-            ),
-          ),
-          SizedBox(height: 12),
-          Card(
-            elevation: 4,
-            child: ListTile(
-              leading: Icon(Icons.warning, color: Colors.orange),
-              title: Text('Recent Alerts'),
-              subtitle: Text('No active threats'),
-            ),
-          ),
-          SizedBox(height: 12),
-          Card(
-            elevation: 4,
-            child: ListTile(
-              leading: Icon(Icons.storage, color: Colors.blue),
-              title: Text('System Logs'),
-              subtitle: Text('Last updated today'),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class LogsScreen extends StatelessWidget {
-  const LogsScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: const [
-        ListTile(
-          leading: Icon(Icons.check_circle, color: Colors.green),
-          title: Text('Login Successful'),
-          subtitle: Text('Today • 10:30 AM'),
-        ),
-        Divider(),
-        ListTile(
-          leading: Icon(Icons.block, color: Colors.red),
-          title: Text('Blocked Access Attempt'),
-          subtitle: Text('Yesterday • 9:15 PM'),
-        ),
-        Divider(),
-        ListTile(
-          leading: Icon(Icons.info, color: Colors.blue),
-          title: Text('System Scan Completed'),
-          subtitle: Text('Yesterday • 6:00 PM'),
-        ),
-      ],
-    );
-  }
-}
-
-class SettingsScreen extends StatefulWidget {
+class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
-}
-
-class _SettingsScreenState extends State<SettingsScreen> {
-  bool notificationsEnabled = true;
-  bool darkModeEnabled = false;
-
-  @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        SwitchListTile(
-          title: const Text('Enable Notifications'),
-          value: notificationsEnabled,
-          onChanged: (value) {
-            setState(() {
-              notificationsEnabled = value;
-            });
-          },
+    final settings = Provider.of<SettingsProvider>(context);
+
+    return Scaffold(
+      appBar: AppBar(title: const Text("Settings")),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            SwitchListTile(
+              title: const Text("Dark Mode"),
+              value: settings.isDarkMode,
+              onChanged: (_) => settings.toggleTheme(),
+            ),
+            const SizedBox(height: 20),
+            const Text("Default Status", style: TextStyle(fontSize: 16)),
+            const SizedBox(height: 10),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: ["Success", "Failed", "Blocked"].map((status) {
+                final isSelected = settings.defaultStatus == status;
+                return ElevatedButton(
+                  onPressed: () => settings.setDefaultStatus(status),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: isSelected ? Colors.blue : Colors.grey),
+                  child: Text(status),
+                );
+              }).toList(),
+            ),
+          ],
         ),
-        SwitchListTile(
-          title: const Text('Dark Mode'),
-          value: darkModeEnabled,
-          onChanged: (value) {
-            setState(() {
-              darkModeEnabled = value;
-            });
-          },
-        ),
-      ],
+      ),
     );
   }
 }
