@@ -210,3 +210,20 @@ Through this project, I learned how to structure a Flutter app using StatelessWi
 <img width="700" height="2000" alt="Screenshot_20251215_170325" src="https://github.com/user-attachments/assets/537cc8cd-7fa6-4933-9f11-db09ce38a68c" />
 
 ---
+
+## Session 7
+
+What I've learned
+
+CyberLog is a Flutter-based logging dashboard application designed to track actions or events with statuses such as Success, Failed, or Blocked. The app allows users to manually select the status of a log entry before adding it, while also supporting a default status set in the Settings screen. Logs are displayed in a dynamic, scrollable list with color-coded icons, timestamps, and a clear visual layout for easy identification. The Settings screen also provides options to toggle dark/light mode and update the default status.
+
+This project is built using Flutter and Dart with Material Design 3. It uses essential Flutter widgets such as MaterialApp, Scaffold, AppBar, Column, Row, ListView, Card, ListTile, and ElevatedButton. State management is implemented using Provider, while ThemeData and ColorScheme are used to maintain a consistent and modern UI.
+
+Through this project, I learned how to structure a Flutter app using StatelessWidget and StatefulWidget, manage state with Provider and setState, implement user-controlled status selection, and apply global theming for better design consistency. This project strengthened my understanding of Flutter UI fundamentals and serves as a strong foundation for building interactive and dynamic Flutter applications.
+
+---
+
+<img width="700" height="2000" alt="Screenshot_20251217_171503" src="https://github.com/user-attachments/assets/2673462f-4287-4def-8504-0bfa1162d469" />
+<img width="700" height="2000" alt="Screenshot_20251217_171537" src="https://github.com/user-attachments/assets/ca19cdeb-e875-4258-aa61-dae4cb87ef04" />
+
+---
