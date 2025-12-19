@@ -227,3 +227,20 @@ Through this project, I learned how to structure a Flutter app using StatelessWi
 <img width="700" height="2000" alt="Screenshot_20251217_171537" src="https://github.com/user-attachments/assets/ca19cdeb-e875-4258-aa61-dae4cb87ef04" />
 
 ---
+
+## Session 8
+
+What I've learned
+
+Cyber Tip of the Day is a Flutter-based application designed to provide users with cybersecurity tips, both from an online API and a curated local list. The app fetches random tips from an external API whenever the user taps the “Get API Tip” button, while also offering a fallback option using over 100 pre-defined cybersecurity tips stored locally. Users can view tips in a clean, card-based UI, and a loading indicator shows when tips are being fetched from the API.
+
+This project is built using Flutter and Dart with Material Design 3. It utilizes essential Flutter widgets such as MaterialApp, Scaffold, AppBar, Column, Container, Text, ElevatedButton, and CircularProgressIndicator. State management is handled using setState, and UI elements are styled with padding, rounded corners, and color differentiation to improve readability.
+
+Through this project, I learned how to handle asynchronous API requests, implement fallback logic for offline support, manage state in Flutter apps, and design a user-friendly interface. This project strengthened my understanding of Flutter UI fundamentals, asynchronous programming, and creating reliable, interactive mobile applications
+
+---
+
+<img width="700" height="2000" alt="Screenshot_20251219_175226" src="https://github.com/user-attachments/assets/666e4c28-0d6f-4ddb-9d0c-e46f28ca184c" />
+
+
+---
