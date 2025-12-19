@@ -27,7 +27,6 @@ class _CyberTipScreenState extends State<CyberTipScreen> {
   String tip = 'Tap button to get tip';
   bool loading = false;
 
-  // Local cybersecurity tips (100+ tips)
   final List<String> cyberTips = [
     "Use strong passwords and enable 2FA",
     "Update software regularly",
@@ -144,14 +143,12 @@ class _CyberTipScreenState extends State<CyberTipScreen> {
     "Scan QR codes with security apps",
   ];
 
-  // Function to get tip
   Future<void> getTip() async {
     setState(() {
       loading = true;
     });
 
     try {
-      // Try API first
       final response = await http.get(
         Uri.parse('https://api.adviceslip.com/advice'),
       );
@@ -162,11 +159,9 @@ class _CyberTipScreenState extends State<CyberTipScreen> {
           tip = data['slip']['advice'];
         });
       } else {
-        // Fallback to local tip
         showLocalTip();
       }
     } catch (e) {
-      // Fallback to local tip
       showLocalTip();
     } finally {
       setState(() {
@@ -175,7 +170,6 @@ class _CyberTipScreenState extends State<CyberTipScreen> {
     }
   }
 
-  // Show random local tip
   void showLocalTip() {
     final randomIndex = DateTime.now().millisecondsSinceEpoch % cyberTips.length;
     setState(() {
@@ -206,7 +200,6 @@ class _CyberTipScreenState extends State<CyberTipScreen> {
 
               const SizedBox(height: 30),
 
-              // Tip Display
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -229,7 +222,6 @@ class _CyberTipScreenState extends State<CyberTipScreen> {
 
               const SizedBox(height: 30),
 
-              // Buttons
               Column(
                 children: [
                   ElevatedButton(
@@ -256,7 +248,6 @@ class _CyberTipScreenState extends State<CyberTipScreen> {
 
               const SizedBox(height: 20),
 
-              // Stats
               Text(
                 'Sir there are no APIs for cyber tips soo ive added it manually soo it wll show both random api tips and cyber tips',
                 style: const TextStyle(color: Colors.blueGrey),
