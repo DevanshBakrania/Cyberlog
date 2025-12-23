@@ -242,5 +242,22 @@ Through this project, I learned how to handle asynchronous API requests, impleme
 
 <img width="700" height="2000" alt="Screenshot_20251219_175226" src="https://github.com/user-attachments/assets/666e4c28-0d6f-4ddb-9d0c-e46f28ca184c" />
 
+---
+
+## Swssion 9
+
+What I've learned
+
+CyberLog is a Flutter-based application designed to help users manage daily tasks and track logs of activities with various statuses such as Success, Failed, or Blocked. The app uses Hive for local storage, allowing users to persist logs, checklist items, and app settings even when offline. Users can view logs and tasks in a clean, card-based UI, toggle dark mode, and delete entries with ease.
+
+This project is built using Flutter and Dart with Material Design 3. It uses essential Flutter widgets such as MaterialApp, Scaffold, AppBar, Column, Row, TextField, ListView, Card, ListTile, Checkbox, and IconButton. State management is handled using setState and ValueListenableBuilder to reflect live updates from Hive boxes. UI elements are styled with padding, rounded corners, color-coded status indicators, and responsive layouts for better readability and usability.
+
+Through this project, I learned how to implement local data storage with Hive, manage state across multiple screens, create interactive UI elements, and design a smooth user experience with Flutter. This project strengthened my understanding of Flutter fundamentals, reactive UI updates, persistent storage, and building practical productivity applications for mobile platforms.
+
+---
+
+<img width="700" height="2000" alt="Screenshot_20251223_173211" src="https://github.com/user-attachments/assets/9112d25e-2fdb-4a88-ad53-7cb3bce2d720" />
+<img width="700" height="2000" alt="Screenshot_20251223_173219" src="https://github.com/user-attachments/assets/327f7753-3965-4686-938a-66575cd88d54" />
+<img width="700" height="2000" alt="Screenshot_20251223_173228" src="https://github.com/user-attachments/assets/040aa67f-8de2-48bd-951f-21b72b3d2cb2" />
 
 ---
