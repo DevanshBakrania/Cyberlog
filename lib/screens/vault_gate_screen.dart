@@ -10,7 +10,6 @@ class VaultGateScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
 
-    // ✅ If already unlocked → go to Vault
     if (auth.isUnlocked) {
       return const VaultScreen();
     }
