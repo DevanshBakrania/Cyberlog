@@ -12,8 +12,8 @@ Auto-locking and inactivity timeout mechanisms helped me understand fail-safe se
 
 ---
 
-<img width="700" height="2000" alt="Screenshot_20260104_194245" src="https://github.com/user-attachments/assets/9feca5fa-c06c-44b9-8bfe-1cb46f1340a8" />
-<img width="700" height="2000" alt="Screenshot_20260104_194311" src="https://github.com/user-attachments/assets/377805dc-3c1c-4696-8738-19268034f13a" />
+<img width="500" height="2000" alt="Screenshot_20260104_194245" src="https://github.com/user-attachments/assets/9feca5fa-c06c-44b9-8bfe-1cb46f1340a8" />
+<img width="500" height="2000" alt="Screenshot_20260104_194311" src="https://github.com/user-attachments/assets/377805dc-3c1c-4696-8738-19268034f13a" />
 
 
 ---
