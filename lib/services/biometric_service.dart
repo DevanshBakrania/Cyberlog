@@ -12,7 +12,7 @@ class BiometricService {
       return await _auth.authenticate(
         localizedReason: 'Unlock Secure Vault',
         options: const AuthenticationOptions(
-          biometricOnly: false, // ✅ REQUIRED
+          biometricOnly: false, 
           stickyAuth: true,
           useErrorDialogs: true,
         ),
