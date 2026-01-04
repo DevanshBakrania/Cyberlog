@@ -13,7 +13,6 @@ class AuthProvider extends ChangeNotifier {
 
   bool get isUnlocked => _isUnlocked;
 
-  // 🔐 Authenticate (Fingerprint / PIN)
   Future<bool> unlockVault() async {
     try {
       final bool isSupported = await _auth.isDeviceSupported();
@@ -39,21 +38,18 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // 🔒 Manual lock
   void lock() {
     _isUnlocked = false;
     _autoLockTimer?.cancel();
     notifyListeners();
   }
-
-  // ⏱ Reset timer on user activity
+  
   void resetTimer() {
     if (_isUnlocked) {
       _startAutoLockTimer();
     }
   }
 
-  // ⏲ Auto-lock after 30 seconds
   void _startAutoLockTimer() {
     _autoLockTimer?.cancel();
     _autoLockTimer = Timer(const Duration(seconds: 30), () {
