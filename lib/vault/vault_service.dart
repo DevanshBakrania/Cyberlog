@@ -9,7 +9,6 @@ class VaultService {
     _box = await Hive.openBox<String>('secureVault');
   }
 
-  /// Fetch all decrypted vault items
   static List<VaultItem> getAllItems() {
     return _box.values.map((encryptedValue) {
       final decrypted =
@@ -23,8 +22,6 @@ class VaultService {
       );
     }).toList();
   }
-
-  /// Add new encrypted item
   static Future<void> addItem(String title, String secret) async {
     final encrypted = EncryptionService.encryptText(
       '$title||$secret',
@@ -32,7 +29,6 @@ class VaultService {
     await _box.add(encrypted);
   }
 
-  /// Delete item by index
   static Future<void> deleteItem(int index) async {
     await _box.deleteAt(index);
   }
