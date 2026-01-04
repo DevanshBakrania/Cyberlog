@@ -39,7 +39,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     fetchPublicIP();
   }
 
-  // ---------------- PUBLIC IP ----------------
   Future<void> fetchPublicIP() async {
     try {
       final response = await http.get(
@@ -62,7 +61,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-  // ---------------- DEVICE INFO ----------------
   Future<void> _loadDeviceInfo() async {
     final deviceInfo = DeviceInfoPlugin();
 
@@ -108,14 +106,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
             const SizedBox(height: 16),
             _buildSecurityFeedCard(),
             const SizedBox(height: 16),
-            _buildVaultCard(), // 🔐 NEW
+            _buildVaultCard(), 
           ],
         ),
       ),
     );
   }
-
-  // ---------------- HARDWARE AUDIT ----------------
+-
   Widget _buildHardwareAuditCard() {
     return _cyberCard(
       icon: Icons.devices,
@@ -125,7 +122,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  // ---------------- NETWORK INTEL ----------------
   Widget _buildNetworkIntelCard() {
     return _cyberCard(
       icon: Icons.public,
@@ -135,7 +131,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  // ---------------- SECURITY FEED ----------------
   Widget _buildSecurityFeedCard() {
     return Card(
       color: const Color(0xFF020617),
@@ -170,7 +165,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  // ---------------- VAULT CARD (NEW) ----------------
   Widget _buildVaultCard() {
     return Card(
       color: const Color(0xFF020617),
@@ -198,7 +192,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  // ---------------- COMMON CARD ----------------
   Widget _cyberCard({
     required IconData icon,
     required Color iconColor,
