@@ -1,16 +1,11 @@
 # cybershield
 
-A new Flutter project.
+CyberShield is a Flutter-based security application created to understand and apply real-world mobile security concepts. Instead of focusing only on UI, this project concentrates on how sensitive data should be securely stored, accessed, and protected inside a mobile app. The main goal of CyberShield is to build a secure vault that prevents unauthorized access, reduces data exposure, and follows practical cybersecurity principles.
 
-## Getting Started
+While building CyberShield, I implemented a complete vault authentication system using device-level security such as system PIN, pattern, or biometric authentication. I learned how to restrict access to sensitive screens until authentication is successful and how critical it is to re-lock protected data when the application goes into the background, becomes inactive, or is left idle. This helped me understand session-based security and how real applications protect users even when they forget to lock the app manually.
 
-This project is a starting point for a Flutter application.
+The project taught me how sensitive information should be stored and displayed responsibly. Secrets inside the vault are masked by default and are only revealed temporarily during an active authenticated session. This reinforced the principle of least privilege and helped me understand why secure applications never expose sensitive data by default. Implementing visibility controls and automatic reset behavior showed me how small design decisions can significantly improve security.
 
-A few resources to get you started if this is your first Flutter project:
+By adding clipboard protection, I learned about indirect data leakage risks that are often ignored in basic applications. Copying secrets is allowed only with explicit user action, and the clipboard is automatically cleared after a short duration. This feature improved my understanding of real-world attack surfaces such as clipboard sniffing and how applications can reduce these risks even with platform limitations.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Auto-locking and inactivity timeout mechanisms helped me understand fail-safe security design. Any user interaction resets the session timer, while inactivity or lifecycle changes immediately lock the vault. Through this, I learned how secure systems assume user error and protect data proactively rather than relying on perfect user behavior.
