@@ -173,7 +173,6 @@ class _VaultScreenState extends State<VaultScreen>
         ),
         body: Column(
           children: [
-            // 🔍 SEARCH BAR
             Padding(
               padding: const EdgeInsets.all(12),
               child: TextField(
@@ -191,7 +190,6 @@ class _VaultScreenState extends State<VaultScreen>
               ),
             ),
 
-            // 📄 LIST
             Expanded(
               child: filteredItems.isEmpty
                   ? const Center(
