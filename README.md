@@ -12,8 +12,9 @@ Auto-locking and inactivity timeout mechanisms helped me understand fail-safe se
 
 ---
 
-![WhatsApp Image 2026-01-04 at 19 35 17](https://github.com/user-attachments/assets/19326ab4-0d36-4193-be3d-378564244d59)
-![WhatsApp Image 2026-01-04 at 19 35 18 (1)](https://github.com/user-attachments/assets/d6b4bbf4-a9ae-4161-93b3-eeea76f48abf)
+<img width="700" height="2000" alt="Screenshot_20260104_194245" src="https://github.com/user-attachments/assets/9feca5fa-c06c-44b9-8bfe-1cb46f1340a8" />
+<img width="700" height="2000" alt="Screenshot_20260104_194311" src="https://github.com/user-attachments/assets/377805dc-3c1c-4696-8738-19268034f13a" />
+
 
 ---
 
