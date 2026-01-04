@@ -9,3 +9,22 @@ The project taught me how sensitive information should be stored and displayed r
 By adding clipboard protection, I learned about indirect data leakage risks that are often ignored in basic applications. Copying secrets is allowed only with explicit user action, and the clipboard is automatically cleared after a short duration. This feature improved my understanding of real-world attack surfaces such as clipboard sniffing and how applications can reduce these risks even with platform limitations.
 
 Auto-locking and inactivity timeout mechanisms helped me understand fail-safe security design. Any user interaction resets the session timer, while inactivity or lifecycle changes immediately lock the vault. Through this, I learned how secure systems assume user error and protect data proactively rather than relying on perfect user behavior.
+
+---
+
+![WhatsApp Image 2026-01-04 at 19 35 17](https://github.com/user-attachments/assets/19326ab4-0d36-4193-be3d-378564244d59)
+![WhatsApp Image 2026-01-04 at 19 35 18 (1)](https://github.com/user-attachments/assets/d6b4bbf4-a9ae-4161-93b3-eeea76f48abf)
+
+---
+
+![WhatsApp Image 2026-01-04 at 19 35 18](https://github.com/user-attachments/assets/27655523-8ba1-4722-90c8-baf24683f198)
+
+---
+
+![WhatsApp Image 2026-01-04 at 19 35 17 (1)](https://github.com/user-attachments/assets/c272081d-91b5-4d02-933f-1e4e56c14154)
+
+---
+
+![WhatsApp Image 2026-01-04 at 19 35 17 (2)](https://github.com/user-attachments/assets/6a7838e5-6b54-419d-8429-0f83a215e4c6)
+
+---
