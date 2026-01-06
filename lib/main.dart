@@ -1,14 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Hive.initFlutter();
-
-  await Hive.openBox('logs');
-  await Hive.openBox('checklist');
-  await Hive.openBox('settings');
-
+void main() {
   runApp(const CyberLogApp());
 }
 
@@ -17,318 +13,233 @@ class CyberLogApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final settingsBox = Hive.box('settings');
-
-    return ValueListenableBuilder(
-      valueListenable: settingsBox.listenable(),
-      builder: (context, box, _) {
-        final darkMode = box.get('darkMode', defaultValue: false);
-
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: darkMode ? ThemeData.dark() : ThemeData.light(),
-          home: const MainScreen(),
-        );
-      },
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: "CyberLog",
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.green,
+        scaffoldBackgroundColor: const Color(0xFFF6F7F2),
+      ),
+      home: const Dashboard(),
     );
   }
 }
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+class Dashboard extends StatefulWidget {
+  const Dashboard({super.key});
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  State<Dashboard> createState() => _DashboardState();
 }
 
-class _MainScreenState extends State<MainScreen> {
-  int index = 0;
+class _DashboardState extends State<Dashboard> {
+  bool cameraGranted = false;
+  bool storageGranted = false;
+  bool internetActive = false;
 
-  final screens = const [
-    LogsScreen(),
-    ChecklistScreen(),
-    SettingsScreen(),
-  ];
+  File? image;
+  String cyberTip = "";
+  List<String> logs = [];
+
+  @override
+  void initState() {
+    super.initState();
+    refreshStatus();
+  }
+
+  void log(String msg) {
+    final time = TimeOfDay.now().format(context);
+    setState(() {
+      logs.insert(0, "[$time] $msg");
+    });
+  }
+
+  Future<void> refreshStatus() async {
+    cameraGranted = await Permission.camera.isGranted;
+    storageGranted = await Permission.photos.isGranted;
+
+    final net = await Connectivity().checkConnectivity();
+    internetActive = net != ConnectivityResult.none;
+
+    setState(() {});
+  }
+
+  Future<void> openCamera() async {
+    if (!cameraGranted) {
+      final res = await Permission.camera.request();
+      if (!res.isGranted) {
+        log("Camera permission denied");
+        return;
+      }
+    }
+
+    final picked = await ImagePicker().pickImage(source: ImageSource.camera);
+    if (picked != null) {
+      image = File(picked.path);
+      log("Image captured");
+      setState(() {});
+    }
+  }
+
+  Future<void> openStorage() async {
+    if (!storageGranted) {
+      final res = await Permission.photos.request();
+      if (!res.isGranted) {
+        log("Storage permission denied");
+        return;
+      }
+    }
+
+    final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (picked != null) {
+      image = File(picked.path);
+      log("Image selected from storage");
+      setState(() {});
+    }
+  }
+
+  Future<void> fetchTip() async {
+    await refreshStatus();
+
+    if (!internetActive) {
+      cyberTip = "No internet connection available.";
+      log("Cyber tip failed (offline)");
+    } else {
+      cyberTip =
+      "Always use strong passwords and enable two-factor authentication.";
+      log("Cyber tip fetched");
+    }
+    setState(() {});
+  }
+
+  Widget statusChip(String label, bool ok) {
+    return Chip(
+      label: Text(label),
+      backgroundColor: ok ? Colors.green.shade100 : Colors.red.shade100,
+      labelStyle:
+      TextStyle(color: ok ? Colors.green.shade900 : Colors.red.shade900),
+    );
+  }
+
+  Widget sectionCard(String title, Widget child) {
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title,
+                style:
+                const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 12),
+            child,
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget actionButton(
+      {required IconData icon,
+        required String label,
+        required VoidCallback onTap}) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        icon: Icon(icon),
+        label: Text(label),
+        onPressed: onTap,
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: screens[index],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: index,
-        onTap: (i) => setState(() => index = i),
-        items: const [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.list_alt), label: "Logs"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.check_circle), label: "Checklist"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.settings), label: "Settings"),
+      appBar: AppBar(
+        title: const Text("CyberLog Dashboard"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: refreshStatus,
+          )
         ],
       ),
-    );
-  }
-}
-
-class LogsScreen extends StatefulWidget {
-  const LogsScreen({super.key});
-
-  @override
-  State<LogsScreen> createState() => _LogsScreenState();
-}
-
-class _LogsScreenState extends State<LogsScreen> {
-  final logsBox = Hive.box('logs');
-  final controller = TextEditingController();
-
-  void addLog(String status) {
-    logsBox.add({
-      "action": controller.text,
-      "status": status,
-      "time": DateTime.now().toString(),
-    });
-    controller.clear();
-  }
-
-  Color statusColor(String status) {
-    if (status == "Success") return Colors.green;
-    if (status == "Failed") return Colors.red;
-    return Colors.orange;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Cyber Logs")),
-      body: Padding(
-        padding: const EdgeInsets.all(12),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            TextField(
-              controller: controller,
-              decoration: const InputDecoration(
-                labelText: "Log Action",
-                border: OutlineInputBorder(),
+            sectionCard(
+              "Permission Status",
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: [
+                  statusChip("Camera", cameraGranted),
+                  statusChip("Storage", storageGranted),
+                  statusChip("Internet", internetActive),
+                ],
               ),
             ),
-            const SizedBox(height: 8),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                ElevatedButton(
-                    onPressed: () => addLog("Success"),
-                    child: const Text("Success")),
-                ElevatedButton(
-                    onPressed: () => addLog("Failed"),
-                    child: const Text("Failed")),
-                ElevatedButton(
-                    onPressed: () => addLog("Blocked"),
-                    child: const Text("Blocked")),
-              ],
+            const SizedBox(height: 16),
+
+            actionButton(
+              icon: Icons.camera_alt,
+              label: "Capture Evidence",
+              onTap: openCamera,
             ),
-
             const SizedBox(height: 10),
-
-            Expanded(
-              child: ValueListenableBuilder(
-                valueListenable: logsBox.listenable(),
-                builder: (context, box, _) {
-                  return ListView.builder(
-                    itemCount: box.length,
-                    itemBuilder: (context, index) {
-                      final log = box.getAt(index);
-                      return Card(
-                        child: ListTile(
-                          leading: Icon(Icons.security,
-                              color: statusColor(log["status"])),
-                          title: Text(log["action"]),
-                          subtitle: Text(log["time"]),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.delete),
-                            onPressed: () => box.deleteAt(index),
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
+            actionButton(
+              icon: Icons.folder_open,
+              label: "Open Storage",
+              onTap: openStorage,
             ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+            const SizedBox(height: 10),
+            actionButton(
+              icon: Icons.security,
+              label: "Fetch Cyber Tip",
+              onTap: fetchTip,
+            ),
 
-class ChecklistScreen extends StatefulWidget {
-  const ChecklistScreen({super.key});
+            const SizedBox(height: 20),
 
-  @override
-  State<ChecklistScreen> createState() => _ChecklistScreenState();
-}
-
-class _ChecklistScreenState extends State<ChecklistScreen> {
-  final checklistBox = Hive.box('checklist');
-  final TextEditingController taskController = TextEditingController();
-
-  void addTask() {
-    if (taskController.text.trim().isEmpty) return;
-
-    checklistBox.add({
-      "task": taskController.text,
-      "done": false,
-    });
-
-    taskController.clear();
-  }
-
-  void toggleTask(int index) {
-    final item = checklistBox.getAt(index);
-    checklistBox.putAt(index, {
-      "task": item["task"],
-      "done": !item["done"],
-    });
-  }
-
-  void deleteTask(int index) {
-    checklistBox.deleteAt(index);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Daily Checklist")),
-      body: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          children: [
-
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: taskController,
-                    decoration: const InputDecoration(
-                      labelText: "Enter task",
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
+            if (image != null)
+              sectionCard(
+                "Captured Evidence",
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.file(image!),
                 ),
-                const SizedBox(width: 8),
-                IconButton(
-                  icon: const Icon(Icons.add_circle, size: 32),
-                  onPressed: addTask,
-                )
-              ],
-            ),
-
-            const SizedBox(height: 12),
-
-            Expanded(
-              child: ValueListenableBuilder(
-                valueListenable: checklistBox.listenable(),
-                builder: (context, box, _) {
-                  if (box.isEmpty) {
-                    return const Center(
-                      child: Text(
-                        "No tasks added yet",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    );
-                  }
-
-                  return ListView.builder(
-                    itemCount: box.length,
-                    itemBuilder: (context, index) {
-                      final item = box.getAt(index);
-
-                      return Card(
-                        child: ListTile(
-                          leading: Checkbox(
-                            value: item["done"],
-                            onChanged: (_) => toggleTask(index),
-                          ),
-                          title: Text(
-                            item["task"],
-                            style: TextStyle(
-                              decoration: item["done"]
-                                  ? TextDecoration.lineThrough
-                                  : null,
-                            ),
-                          ),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () => deleteTask(index),
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
-class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
+            const SizedBox(height: 16),
 
-  @override
-  Widget build(BuildContext context) {
-    final settingsBox = Hive.box('settings');
-    final logsBox = Hive.box('logs');
+            if (cyberTip.isNotEmpty)
+              sectionCard("Cyber Tip", Text(cyberTip)),
 
-    return Scaffold(
-      appBar: AppBar(title: const Text("Settings")),
-      body: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          children: [
-            ValueListenableBuilder(
-              valueListenable: settingsBox.listenable(),
-              builder: (context, box, _) {
-                return SwitchListTile(
-                  title: const Text("Dark Mode"),
-                  value: box.get('darkMode', defaultValue: false),
-                  onChanged: (value) =>
-                      box.put('darkMode', value),
-                );
-              },
-            ),
+            const SizedBox(height: 16),
 
-            const Divider(),
-
-            ListTile(
-              leading: const Icon(Icons.delete, color: Colors.red),
-              title: const Text("Delete All Logs"),
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (_) => AlertDialog(
-                    title: const Text("Confirm"),
-                    content:
-                    const Text("Are you sure you want to delete all logs?"),
-                    actions: [
-                      TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text("Cancel")),
-                      TextButton(
-                        onPressed: () {
-                          logsBox.clear();
-                          Navigator.pop(context);
-                        },
-                        child: const Text("Delete"),
-                      ),
-                    ],
-                  ),
-                );
-              },
+            sectionCard(
+              "Action Logs",
+              logs.isEmpty
+                  ? const Text("No actions recorded yet.")
+                  : Column(
+                children: logs
+                    .map((e) => ListTile(
+                  leading: const Icon(Icons.history),
+                  title: Text(e),
+                ))
+                    .toList(),
+              ),
             ),
           ],
         ),
