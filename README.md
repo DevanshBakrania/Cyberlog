@@ -266,8 +266,6 @@ Through this project, I learned how to implement local data storage with Hive, m
 
 What I've learned
 
-CyberLog
-
 CyberLog is a Flutter-based application designed to help users understand and implement device permission handling, camera and storage access, internet connectivity checks, and action logging. The app uses card-based UI sections, colored status chips, and responsive layouts to display permissions, captured images, and cyber tips in an organized manner. Users can interact with the app through buttons for capturing evidence, opening storage, or fetching tips, and all actions are recorded in the Action Logs section with timestamps.
 
 Features -
@@ -287,3 +285,15 @@ Clean UI – Material3 design with card-based layouts, colored status chips, and
 This project is built using Flutter and Dart with Material Design 3. It leverages widgets like MaterialApp, Scaffold, AppBar, Column, Wrap, Card, ListTile, Chip, ElevatedButton, and Image. State management is handled using setState to dynamically update UI elements based on permission status, image selection, or log entries.
 
 Through this project, I learned how to implement permission handling using permission_handler, capture and select images using image_picker, check internet connectivity with connectivity_plus, and build a reactive, interactive UI. The project strengthened my understanding of Flutter fundamentals, dynamic UI updates, and building practical applications that combine functionality, user experience, and security awareness.
+
+---
+
+![WhatsApp Image 2026-01-06 at 16 44 52 png](https://github.com/user-attachments/assets/052ff081-f8b5-404e-bd2a-082385c212d2)
+![WhatsApp Image (1) png](https://github.com/user-attachments/assets/56e68ba6-db29-4fdb-b1fe-e9a041bbae07)
+![WhatsApp Image 2026-01-06 at 16 44 54 (1) png](https://github.com/user-attachments/assets/4452fa79-3d73-48b2-aa42-d6b89cd4b465)
+![WhatsApp Image 2026-01-06 at 16 44 54 png](https://github.com/user-attachments/assets/a85a5de3-7fcc-4e0c-8e2d-dc47dcbefc62)
+![WhatsApp Image 2026-01-06 at 16 44 53 (1) png](https://github.com/user-attachments/assets/75cfcc71-4d76-411f-9169-991278a5911f)
+![WhatsApp Image 2026-01-06 at 16 44 54 (2) png](https://github.com/user-attachments/assets/5c8df4d9-4226-48f9-962e-cf68d86ea18f)
+![WhatsApp Image 2026-01-06 at 16 44 53 png](https://github.com/user-attachments/assets/6f704ad9-bc35-4a0e-9b64-512d6709f6f5)
+
+---
