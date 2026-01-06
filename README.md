@@ -244,7 +244,7 @@ Through this project, I learned how to handle asynchronous API requests, impleme
 
 ---
 
-## Swssion 9
+## Session 9
 
 What I've learned
 
@@ -261,3 +261,29 @@ Through this project, I learned how to implement local data storage with Hive, m
 <img width="700" height="2000" alt="Screenshot_20251223_173228" src="https://github.com/user-attachments/assets/040aa67f-8de2-48bd-951f-21b72b3d2cb2" />
 
 ---
+
+## Session 10
+
+What I've learned
+
+CyberLog
+
+CyberLog is a Flutter-based application designed to help users understand and implement device permission handling, camera and storage access, internet connectivity checks, and action logging. The app uses card-based UI sections, colored status chips, and responsive layouts to display permissions, captured images, and cyber tips in an organized manner. Users can interact with the app through buttons for capturing evidence, opening storage, or fetching tips, and all actions are recorded in the Action Logs section with timestamps.
+
+Features -
+
+Permission Status Dashboard – View the status of Camera, Storage, and Internet connectivity.
+
+Capture Evidence – Take photos using the device camera and preview them in the app.
+
+Open Storage – Select images from the device gallery.
+
+Cyber Tip – Fetch predefined cybersecurity advice based on internet connectivity.
+
+Action Logs – Automatically record all user actions with timestamps.
+
+Clean UI – Material3 design with card-based layouts, colored status chips, and responsive design.
+
+This project is built using Flutter and Dart with Material Design 3. It leverages widgets like MaterialApp, Scaffold, AppBar, Column, Wrap, Card, ListTile, Chip, ElevatedButton, and Image. State management is handled using setState to dynamically update UI elements based on permission status, image selection, or log entries.
+
+Through this project, I learned how to implement permission handling using permission_handler, capture and select images using image_picker, check internet connectivity with connectivity_plus, and build a reactive, interactive UI. The project strengthened my understanding of Flutter fundamentals, dynamic UI updates, and building practical applications that combine functionality, user experience, and security awareness.
