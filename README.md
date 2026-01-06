@@ -291,9 +291,8 @@ Through this project, I learned how to implement permission handling using permi
 ![WhatsApp Image 2026-01-06 at 16 44 52 png](https://github.com/user-attachments/assets/052ff081-f8b5-404e-bd2a-082385c212d2)
 ![WhatsApp Image (1) png](https://github.com/user-attachments/assets/56e68ba6-db29-4fdb-b1fe-e9a041bbae07)
 ![WhatsApp Image 2026-01-06 at 16 44 54 (1) png](https://github.com/user-attachments/assets/4452fa79-3d73-48b2-aa42-d6b89cd4b465)
-![WhatsApp Image 2026-01-06 at 16 44 54 png](https://github.com/user-attachments/assets/a85a5de3-7fcc-4e0c-8e2d-dc47dcbefc62)
-![WhatsApp Image 2026-01-06 at 16 44 53 (1) png](https://github.com/user-attachments/assets/75cfcc71-4d76-411f-9169-991278a5911f)
 <img width="832" height="601" alt="Screenshot 2026-01-06 170659" src="https://github.com/user-attachments/assets/402a4c37-3d9e-4cfe-96a8-b7edaa49c2f1" />
+![WhatsApp Image 2026-01-06 at 16 44 53 (1) png](https://github.com/user-attachments/assets/75cfcc71-4d76-411f-9169-991278a5911f)
 ![WhatsApp Image 2026-01-06 at 16 44 54 (2) png](https://github.com/user-attachments/assets/5c8df4d9-4226-48f9-962e-cf68d86ea18f)
 ![WhatsApp Image 2026-01-06 at 16 44 53 png](https://github.com/user-attachments/assets/6f704ad9-bc35-4a0e-9b64-512d6709f6f5)
 
