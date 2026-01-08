@@ -1,162 +1,340 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(const CyberLogApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  await Hive.openBox('logs'); 
+  await Hive.openBox('settings'); 
+
+  final prefs = await SharedPreferences.getInstance();
+  final bool isDarkMode = prefs.getBool('isDarkMode') ?? false;
+
+  runApp(CyberLogApp(initialDarkMode: isDarkMode));
+}
+class CyberLogApp extends StatefulWidget {
+  final bool initialDarkMode;
+  const CyberLogApp({super.key, required this.initialDarkMode});
+
+  @override
+  State<CyberLogApp> createState() => _CyberLogAppState();
 }
 
-class CyberLogApp extends StatelessWidget {
-  const CyberLogApp({super.key});
+class _CyberLogAppState extends State<CyberLogApp> {
+  late bool isDarkMode;
+
+  @override
+  void initState() {
+    super.initState();
+    isDarkMode = widget.initialDarkMode;
+  }
+
+  void toggleTheme(bool value) async {
+    setState(() => isDarkMode = value);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isDarkMode', value);
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: "CyberLog",
-      theme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: Colors.green,
-        scaffoldBackgroundColor: const Color(0xFFF6F7F2),
+      theme: isDarkMode ? ThemeData.dark() : ThemeData.light(),
+      home: HomeScreen(
+        isDarkMode: isDarkMode,
+        onThemeChanged: toggleTheme,
       ),
-      home: const Dashboard(),
     );
   }
 }
 
-class Dashboard extends StatefulWidget {
-  const Dashboard({super.key});
+class HomeScreen extends StatefulWidget {
+  final bool isDarkMode;
+  final Function(bool) onThemeChanged;
+  const HomeScreen({super.key, required this.isDarkMode, required this.onThemeChanged});
 
   @override
-  State<Dashboard> createState() => _DashboardState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _DashboardState extends State<Dashboard> {
-  bool cameraGranted = false;
-  bool storageGranted = false;
-  bool internetActive = false;
-
-  File? image;
-  String cyberTip = "";
-  List<String> logs = [];
+class _HomeScreenState extends State<HomeScreen> {
+  final logsBox = Hive.box('logs');
+  final settingsBox = Hive.box('settings');
+  String defaultStatus = 'Success';
 
   @override
   void initState() {
     super.initState();
-    refreshStatus();
+    defaultStatus = settingsBox.get('defaultStatus', defaultValue: 'Success');
   }
 
-  void log(String msg) {
-    final time = TimeOfDay.now().format(context);
-    setState(() {
-      logs.insert(0, "[$time] $msg");
-    });
-  }
+  int getTotalLogs() => logsBox.length;
 
-  Future<void> refreshStatus() async {
-    cameraGranted = await Permission.camera.isGranted;
-    storageGranted = await Permission.photos.isGranted;
-
-    final net = await Connectivity().checkConnectivity();
-    internetActive = net != ConnectivityResult.none;
-
-    setState(() {});
-  }
-
-  Future<void> openCamera() async {
-    if (!cameraGranted) {
-      final res = await Permission.camera.request();
-      if (!res.isGranted) {
-        log("Camera permission denied");
-        return;
-      }
-    }
-
-    final picked = await ImagePicker().pickImage(source: ImageSource.camera);
-    if (picked != null) {
-      image = File(picked.path);
-      log("Image captured");
-      setState(() {});
-    }
-  }
-
-  Future<void> openStorage() async {
-    if (!storageGranted) {
-      final res = await Permission.photos.request();
-      if (!res.isGranted) {
-        log("Storage permission denied");
-        return;
-      }
-    }
-
-    final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (picked != null) {
-      image = File(picked.path);
-      log("Image selected from storage");
-      setState(() {});
-    }
-  }
-
-  Future<void> fetchTip() async {
-    await refreshStatus();
-
-    if (!internetActive) {
-      cyberTip = "No internet connection available.";
-      log("Cyber tip failed (offline)");
-    } else {
-      cyberTip =
-      "Always use strong passwords and enable two-factor authentication.";
-      log("Cyber tip fetched");
-    }
-    setState(() {});
-  }
-
-  Widget statusChip(String label, bool ok) {
-    return Chip(
-      label: Text(label),
-      backgroundColor: ok ? Colors.green.shade100 : Colors.red.shade100,
-      labelStyle:
-      TextStyle(color: ok ? Colors.green.shade900 : Colors.red.shade900),
+  void addLog(String status) {
+    logsBox.add({'status': status, 'time': DateTime.now().toString()});
+    setState(() {}); 
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Added log with status: $status')),
     );
   }
 
-  Widget sectionCard(String title, Widget child) {
-    return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
+  void clearLogs() {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Confirm Clear Logs'),
+        content: const Text('Are you sure you want to delete all logs?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(
+              onPressed: () {
+                logsBox.clear();
+                setState(() {});
+                Navigator.pop(context);
+              },
+              child: const Text('Clear', style: TextStyle(color: Colors.red))
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final recentLogs = logsBox.values.toList().reversed.take(5).toList();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('CyberLog Dashboard'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => SettingsScreen(
+                      isDarkMode: widget.isDarkMode,
+                      onThemeChanged: widget.onThemeChanged),
+                ),
+              ).then((_) {
+                setState(() {
+                  defaultStatus = settingsBox.get('defaultStatus', defaultValue: 'Success');
+                });
+              });
+            },
+          )
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(12),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title,
-                style:
-                const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 12),
-            child,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _statCard('Total Logs', getTotalLogs().toString(), Colors.blue),
+                _statCard('Default Status', defaultStatus, Colors.green),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Recent Logs', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: recentLogs.isEmpty
+                        ? const Center(child: Text('No logs yet'))
+                        : ListView.builder(
+                      itemCount: recentLogs.length,
+                      itemBuilder: (context, index) {
+                        final rawLog = recentLogs[index];
+                        Map log;
+                        if (rawLog is Map) {
+                          log = Map.from(rawLog);
+                        } else if (rawLog is String) {
+                          log = {'status': rawLog, 'time': ''};
+                        } else {
+                          log = {'status': 'Unknown', 'time': ''};
+                        }
+
+                        Color color = Colors.grey;
+                        if (log['status'] == 'Success') color = Colors.green;
+                        if (log['status'] == 'Failed') color = Colors.red;
+                        if (log['status'] == 'Blocked') color = Colors.orange;
+
+                        return Card(
+                          child: ListTile(
+                            leading: Icon(Icons.circle, color: color),
+                            title: Text(log['status']),
+                            subtitle: Text(log['time']),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () => addLog(defaultStatus),
+                  icon: const Icon(Icons.add),
+                  label: const Text('Add Log'),
+                ),
+              ],
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget actionButton(
-      {required IconData icon,
-        required String label,
-        required VoidCallback onTap}) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton.icon(
-        icon: Icon(icon),
-        label: Text(label),
-        onPressed: onTap,
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+  Widget _statCard(String title, String value, Color color) {
+    return Card(
+      elevation: 4,
+      color: color.withOpacity(0.2),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: SizedBox(
+        width: 150,
+        height: 80,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 6),
+              Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+}
+
+class SettingsScreen extends StatefulWidget {
+  final bool isDarkMode;
+  final Function(bool) onThemeChanged;
+
+  const SettingsScreen({super.key, required this.isDarkMode, required this.onThemeChanged});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  static const MethodChannel _channel = MethodChannel('cyberlog/device');
+  final settingsBox = Hive.box('settings');
+
+  String deviceModel = 'Loading...';
+  String androidVersion = 'Loading...';
+  bool isLoading = true;
+
+  String defaultStatus = 'Success';
+  final List<String> statuses = ['Success', 'Failed', 'Blocked'];
+
+  Map<String, PermissionStatus> permissions = {
+    'Camera': PermissionStatus.denied,
+    'Storage': PermissionStatus.denied,
+    'Location': PermissionStatus.denied,
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    defaultStatus = settingsBox.get('defaultStatus', defaultValue: 'Success');
+    fetchDeviceInfo();
+    checkPermissions();
+  }
+
+  Future<void> fetchDeviceInfo() async {
+    try {
+      final model = await _channel.invokeMethod<String>('getDeviceModel');
+      final version = await _channel.invokeMethod<String>('getAndroidVersion');
+
+      setState(() {
+        deviceModel = model ?? 'Unknown';
+        androidVersion = version ?? 'Unknown';
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        deviceModel = 'Unavailable';
+        androidVersion = 'Unavailable';
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> checkPermissions() async {
+    permissions['Camera'] = await Permission.camera.status;
+    permissions['Storage'] = await Permission.storage.status;
+    permissions['Location'] = await Permission.location.status;
+    setState(() {});
+  }
+
+  void saveDefaultStatus(String status) {
+    setState(() => defaultStatus = status);
+    settingsBox.put('defaultStatus', status);
+  }
+
+  void clearLogs() async {
+    final logsBox = Hive.box('logs');
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Confirm Clear Logs'),
+        content: const Text('Are you sure you want to delete all logs?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(
+              onPressed: () {
+                logsBox.clear();
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('All logs cleared!')),
+                );
+              },
+              child: const Text('Clear', style: TextStyle(color: Colors.red))
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget permissionTile(String name, PermissionStatus status) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ListTile(
+        leading: Icon(
+          status.isGranted ? Icons.check_circle : Icons.cancel,
+          color: status.isGranted ? Colors.green : Colors.red,
+        ),
+        title: Text(name),
+        subtitle: Text(status.toString().split('.').last),
+      ),
+    );
+  }
+
+  Widget settingsTile(String title, String value, IconData icon) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      child: ListTile(
+        leading: Icon(icon, color: Colors.blue),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(value),
       ),
     );
   }
@@ -164,83 +342,60 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("CyberLog Dashboard"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: refreshStatus,
-          )
-        ],
-      ),
-      body: SingleChildScrollView(
+      appBar: AppBar(title: const Text('Settings'), centerTitle: true),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(
+        child: ListView(
           children: [
-            sectionCard(
-              "Permission Status",
-              Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                children: [
-                  statusChip("Camera", cameraGranted),
-                  statusChip("Storage", storageGranted),
-                  statusChip("Internet", internetActive),
-                ],
+            settingsTile('Device Model', deviceModel, Icons.phone_android),
+            const SizedBox(height: 12),
+            settingsTile('Android Version', androidVersion, Icons.android),
+            const SizedBox(height: 20),
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              child: SwitchListTile(
+                title: const Text('Dark Mode', style: TextStyle(fontWeight: FontWeight.bold)),
+                secondary: const Icon(Icons.dark_mode, color: Colors.blue),
+                value: widget.isDarkMode,
+                onChanged: widget.onThemeChanged,
               ),
             ),
-
-            const SizedBox(height: 16),
-
-            actionButton(
-              icon: Icons.camera_alt,
-              label: "Capture Evidence",
-              onTap: openCamera,
-            ),
-            const SizedBox(height: 10),
-            actionButton(
-              icon: Icons.folder_open,
-              label: "Open Storage",
-              onTap: openStorage,
-            ),
-            const SizedBox(height: 10),
-            actionButton(
-              icon: Icons.security,
-              label: "Fetch Cyber Tip",
-              onTap: fetchTip,
-            ),
-
             const SizedBox(height: 20),
-
-            if (image != null)
-              sectionCard(
-                "Captured Evidence",
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: Image.file(image!),
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              child: ListTile(
+                leading: const Icon(Icons.list_alt, color: Colors.blue),
+                title: const Text('Default Log Status', style: TextStyle(fontWeight: FontWeight.bold)),
+                trailing: DropdownButton<String>(
+                  value: defaultStatus,
+                  items: statuses.map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
+                  onChanged: (value) {
+                    if (value != null) saveDefaultStatus(value);
+                  },
                 ),
               ),
-
-            const SizedBox(height: 16),
-
-            if (cyberTip.isNotEmpty)
-              sectionCard("Cyber Tip", Text(cyberTip)),
-
-            const SizedBox(height: 16),
-
-            sectionCard(
-              "Action Logs",
-              logs.isEmpty
-                  ? const Text("No actions recorded yet.")
-                  : Column(
-                children: logs
-                    .map((e) => ListTile(
-                  leading: const Icon(Icons.history),
-                  title: Text(e),
-                ))
-                    .toList(),
-              ),
             ),
+            const SizedBox(height: 20),
+            const Text('Permissions', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            const SizedBox(height: 10),
+            ...permissions.entries.map((e) => permissionTile(e.key, e.value)),
+            const SizedBox(height: 20),
+            ElevatedButton.icon(
+              onPressed: clearLogs,
+              icon: const Icon(Icons.delete),
+              label: const Text('Clear Logs'),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            ),
+            const SizedBox(height: 20),
+            const Text('App Info', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            const SizedBox(height: 10),
+            const Text('CyberLog v1.0.0'),
+            const Text('Build: 1.0.0'),
+            const Text('Developer: Devansh'),
           ],
         ),
       ),
