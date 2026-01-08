@@ -297,3 +297,36 @@ Through this project, I learned how to implement permission handling using permi
 ![WhatsApp Image 2026-01-06 at 16 44 53 png](https://github.com/user-attachments/assets/6f704ad9-bc35-4a0e-9b64-512d6709f6f5)
 
 ---
+
+## Session 11
+
+What I've learned
+
+CyberLog is a Flutter-based application designed to help users manage and track daily activity logs while understanding device information, theme handling, and permission monitoring. The app uses card-based UI sections, colored status indicators, and responsive layouts to display total logs, recent entries, default statuses, and permission statuses in an organized manner. Users can interact with the app through buttons to add logs, change default statuses, toggle dark mode, or clear all logs, and all actions are recorded locally with timestamps.
+
+Features –
+
+Dashboard – View total logs, default log status, and recent entries with color-coded status indicators.
+
+Add Logs – Record new activity logs with timestamps and default status.
+
+Device Info – View device model and Android version retrieved using MethodChannel.
+
+Theme Management – Toggle between light and dark modes with preferences saved using SharedPreferences.
+
+Permissions Dashboard – Monitor the status of Camera, Storage, and Location permissions.
+
+Settings Management – Change default log status, clear all logs, and customize app settings.
+
+Clean UI – Material design with card-based layouts, colored status indicators, and responsive sections.
+
+This project is built using Flutter and Dart. It leverages widgets like MaterialApp, Scaffold, AppBar, Column, Row, Card, ListTile, SwitchListTile, DropdownButton, and ElevatedButton. State management is handled using setState to dynamically update the dashboard and settings based on log additions, theme changes, or permission status updates.
+
+Through this project, I learned how to implement persistent storage using Hive, manage user preferences with SharedPreferences, fetch device information using MethodChannel, monitor device permissions with permission_handler, and build a reactive, interactive UI. The project strengthened my understanding of Flutter fundamentals, state management, local storage, and building practical applications that combine functionality, usability, and system awareness.
+
+---
+
+<img width="700" height="2000" alt="Screenshot_20260108_130319" src="https://github.com/user-attachments/assets/be036056-96e4-4e48-b916-c0362de25d48" />
+<img width="700" height="2000" alt="Screenshot_20260108_130334" src="https://github.com/user-attachments/assets/f51058db-89bb-403b-8e1f-29c60938d1b6" />
+
+---
