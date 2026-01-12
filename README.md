@@ -330,3 +330,25 @@ Through this project, I learned how to implement persistent storage using Hive, 
 <img width="700" height="2000" alt="Screenshot_20260108_130334" src="https://github.com/user-attachments/assets/f51058db-89bb-403b-8e1f-29c60938d1b6" />
 
 ---
+
+## Session 12
+
+What I've learned
+
+CyberLog is a Flutter-based mobile security awareness application that helps users evaluate their device’s security posture by monitoring dangerous permissions, calculating a security score, and dynamically mapping risks to the OWASP Mobile Top 10. The app presents security information through a clean, card-based and expandable UI with progress indicators and status icons.
+
+Users can review granted permissions, view security recommendations, track security events through a timeline, and access system settings for manual permission control. All security-related actions are logged locally to improve user awareness.
+
+The project is developed using Flutter and Dart, utilizing widgets such as MaterialApp, Scaffold, Card, ListTile, ExpansionTile, and progress indicators. Runtime permission monitoring is implemented using the permission_handler package, and UI updates are handled dynamically using setState.
+
+Through this project, I gained hands-on experience in mobile permission analysis, dynamic security scoring, OWASP Mobile Top 10 risk mapping, and building responsive Flutter dashboards, strengthening my understanding of mobile security concepts and secure UI design.
+
+---
+
+![WhatsApp Image 2026-01-12 at 22 06 48](https://github.com/user-attachments/assets/1024b994-80e4-4d15-8cbe-13fbff6bc55e)
+![WhatsApp Image 2026-01-12 at 22 06 49](https://github.com/user-attachments/assets/3a82cadd-0270-46ba-9860-51ac6836d69f)
+![WhatsApp Image 2026-01-12 at 22 06 50](https://github.com/user-attachments/assets/e2bad2ad-a17e-4814-ac03-d08c2e59649c)
+![WhatsApp Image 2026-01-12 at 22 06 50 (2)](https://github.com/user-attachments/assets/f13603ab-c153-4cf9-9deb-e9929dc2305e)
+![WhatsApp Image 2026-01-12 at 22 06 50 (1)](https://github.com/user-attachments/assets/1bcceaed-d5ee-46e0-a557-76b0bfa72d0c)
+
+---
