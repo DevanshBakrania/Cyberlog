@@ -1,403 +1,237 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Hive.initFlutter();
-  await Hive.openBox('logs'); 
-  await Hive.openBox('settings'); 
-
-  final prefs = await SharedPreferences.getInstance();
-  final bool isDarkMode = prefs.getBool('isDarkMode') ?? false;
-
-  runApp(CyberLogApp(initialDarkMode: isDarkMode));
-}
-class CyberLogApp extends StatefulWidget {
-  final bool initialDarkMode;
-  const CyberLogApp({super.key, required this.initialDarkMode});
-
-  @override
-  State<CyberLogApp> createState() => _CyberLogAppState();
+void main() {
+  runApp(const CyberLogApp());
 }
 
-class _CyberLogAppState extends State<CyberLogApp> {
-  late bool isDarkMode;
-
-  @override
-  void initState() {
-    super.initState();
-    isDarkMode = widget.initialDarkMode;
-  }
-
-  void toggleTheme(bool value) async {
-    setState(() => isDarkMode = value);
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isDarkMode', value);
-  }
+class CyberLogApp extends StatelessWidget {
+  const CyberLogApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: isDarkMode ? ThemeData.dark() : ThemeData.light(),
-      home: HomeScreen(
-        isDarkMode: isDarkMode,
-        onThemeChanged: toggleTheme,
-      ),
+      title: 'CyberLog',
+      theme: ThemeData.dark(useMaterial3: true),
+      home: const SecurityDashboard(),
     );
   }
 }
 
-class HomeScreen extends StatefulWidget {
-  final bool isDarkMode;
-  final Function(bool) onThemeChanged;
-  const HomeScreen({super.key, required this.isDarkMode, required this.onThemeChanged});
+class SecurityDashboard extends StatefulWidget {
+  const SecurityDashboard({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<SecurityDashboard> createState() => _SecurityDashboardState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  final logsBox = Hive.box('logs');
-  final settingsBox = Hive.box('settings');
-  String defaultStatus = 'Success';
+class _SecurityDashboardState extends State<SecurityDashboard> {
+  bool screenLockEnabled = true; 
+  bool rootedOrEmulator = false; 
+
+  List<String> dangerousPermissions = [];
+  List<String> securityLogs = [];
+
+  int deviceScore = 30;
+  int permissionScore = 40;
+  int awarenessScore = 20;
 
   @override
   void initState() {
     super.initState();
-    defaultStatus = settingsBox.get('defaultStatus', defaultValue: 'Success');
+    checkPermissions();
   }
 
-  int getTotalLogs() => logsBox.length;
+  Future<void> checkPermissions() async {
+    final statuses = await [
+      Permission.camera,
+      Permission.microphone,
+      Permission.location,
+      Permission.storage,
+    ].request();
 
-  void addLog(String status) {
-    logsBox.add({'status': status, 'time': DateTime.now().toString()});
-    setState(() {}); 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Added log with status: $status')),
+    List<String> granted = [];
+
+    statuses.forEach((permission, status) {
+      if (status.isGranted) {
+        final name = permission.toString().split('.').last;
+        granted.add(name);
+        securityLogs.add("$name permission granted");
+      }
+    });
+
+    setState(() {
+      dangerousPermissions = granted;
+      permissionScore = 40 - (granted.length * 8);
+      if (permissionScore < 0) permissionScore = 0;
+    });
+  }
+
+  int get totalScore => deviceScore + permissionScore + awarenessScore;
+
+  Color scoreColor() {
+    if (totalScore >= 80) return Colors.green;
+    if (totalScore >= 50) return Colors.orange;
+    return Colors.red;
+  }
+
+  List<String> recommendations() {
+    List<String> tips = [];
+
+    if (!screenLockEnabled) {
+      tips.add("Enable screen lock to protect your device");
+    }
+    if (dangerousPermissions.isNotEmpty) {
+      tips.add("Review granted dangerous permissions");
+    }
+    if (rootedOrEmulator) {
+      tips.add("Avoid using rooted or emulated devices");
+    }
+    if (tips.isEmpty) {
+      tips.add("Your security posture is strong");
+    }
+
+    return tips;
+  }
+
+  Widget scoreCard(String title, int score, int max) {
+    return ListTile(
+      title: Text(title),
+      subtitle: LinearProgressIndicator(value: score / max),
+      trailing: Text("$score / $max"),
     );
   }
 
-  void clearLogs() {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Confirm Clear Logs'),
-        content: const Text('Are you sure you want to delete all logs?'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-          TextButton(
-              onPressed: () {
-                logsBox.clear();
-                setState(() {});
-                Navigator.pop(context);
-              },
-              child: const Text('Clear', style: TextStyle(color: Colors.red))
-          ),
-        ],
+  Widget owaspStatusTile(String title, bool isSecure) {
+    return ListTile(
+      title: Text(title),
+      trailing: Icon(
+        isSecure ? Icons.check_circle : Icons.warning_amber_rounded,
+        color: isSecure ? Colors.green : Colors.orange,
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final recentLogs = logsBox.values.toList().reversed.take(5).toList();
-
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('CyberLog Dashboard'),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => SettingsScreen(
-                      isDarkMode: widget.isDarkMode,
-                      onThemeChanged: widget.onThemeChanged),
-                ),
-              ).then((_) {
-                setState(() {
-                  defaultStatus = settingsBox.get('defaultStatus', defaultValue: 'Success');
-                });
-              });
-            },
-          )
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _statCard('Total Logs', getTotalLogs().toString(), Colors.blue),
-                _statCard('Default Status', defaultStatus, Colors.green),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Expanded(
+      appBar: AppBar(title: const Text("CyberLog Security Dashboard")),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Recent Logs', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  const Text(
+                    "Overall Security Score",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 12),
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      SizedBox(
+                        height: 120,
+                        width: 120,
+                        child: CircularProgressIndicator(
+                          value: totalScore / 100,
+                          strokeWidth: 10,
+                          color: scoreColor(),
+                        ),
+                      ),
+                      Text(
+                        "$totalScore",
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          color: scoreColor(),
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 10),
-                  Expanded(
-                    child: recentLogs.isEmpty
-                        ? const Center(child: Text('No logs yet'))
-                        : ListView.builder(
-                      itemCount: recentLogs.length,
-                      itemBuilder: (context, index) {
-                        final rawLog = recentLogs[index];
-                        Map log;
-                        if (rawLog is Map) {
-                          log = Map.from(rawLog);
-                        } else if (rawLog is String) {
-                          log = {'status': rawLog, 'time': ''};
-                        } else {
-                          log = {'status': 'Unknown', 'time': ''};
-                        }
-
-                        Color color = Colors.grey;
-                        if (log['status'] == 'Success') color = Colors.green;
-                        if (log['status'] == 'Failed') color = Colors.red;
-                        if (log['status'] == 'Blocked') color = Colors.orange;
-
-                        return Card(
-                          child: ListTile(
-                            leading: Icon(Icons.circle, color: color),
-                            title: Text(log['status']),
-                            subtitle: Text(log['time']),
-                          ),
-                        );
-                      },
-                    ),
+                  Text(
+                    totalScore >= 80
+                        ? "Secure Device"
+                        : "Security Needs Improvement",
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton.icon(
-                  onPressed: () => addLog(defaultStatus),
-                  icon: const Icon(Icons.add),
-                  label: const Text('Add Log'),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+          ),
 
-  Widget _statCard(String title, String value, Color color) {
-    return Card(
-      elevation: 4,
-      color: color.withOpacity(0.2),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: SizedBox(
-        width: 150,
-        height: 80,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          const SizedBox(height: 20),
+
+          const Text(
+            "Score Breakdown",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          scoreCard("Device Protection", deviceScore, 40),
+          scoreCard("Permissions", permissionScore, 40),
+          scoreCard("Security Awareness", awarenessScore, 20),
+
+          const SizedBox(height: 20),
+
+          ExpansionTile(
+            leading: const Icon(Icons.lightbulb),
+            title: const Text("Security Recommendations"),
+            children: recommendations()
+                .map(
+                  (tip) => ListTile(
+                leading: const Icon(Icons.arrow_right),
+                title: Text(tip),
+              ),
+            )
+                .toList(),
+          ),
+
+          ExpansionTile(
+            leading: const Icon(Icons.history),
+            title: const Text("Security Timeline"),
+            children: securityLogs.isEmpty
+                ? const [
+              ListTile(title: Text("No security events logged"))
+            ]
+                : securityLogs
+                .map(
+                  (log) => ListTile(
+                leading: const Icon(Icons.event),
+                title: Text(log),
+              ),
+            )
+                .toList(),
+          ),
+
+          ExpansionTile(
+            leading: const Icon(Icons.security),
+            title: const Text("OWASP Mobile Top 10 Mapping"),
             children: [
-              Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 6),
-              Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              owaspStatusTile(
+                "M3 – Insecure Authentication",
+                screenLockEnabled,
+              ),
+              owaspStatusTile(
+                "M5 – Insecure Communication",
+                !dangerousPermissions.contains("location"),
+              ),
+              owaspStatusTile(
+                "M9 – Insecure Data Storage",
+                dangerousPermissions.isEmpty,
+              ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
 
-class SettingsScreen extends StatefulWidget {
-  final bool isDarkMode;
-  final Function(bool) onThemeChanged;
+          const SizedBox(height: 20),
 
-  const SettingsScreen({super.key, required this.isDarkMode, required this.onThemeChanged});
-
-  @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
-}
-
-class _SettingsScreenState extends State<SettingsScreen> {
-  static const MethodChannel _channel = MethodChannel('cyberlog/device');
-  final settingsBox = Hive.box('settings');
-
-  String deviceModel = 'Loading...';
-  String androidVersion = 'Loading...';
-  bool isLoading = true;
-
-  String defaultStatus = 'Success';
-  final List<String> statuses = ['Success', 'Failed', 'Blocked'];
-
-  Map<String, PermissionStatus> permissions = {
-    'Camera': PermissionStatus.denied,
-    'Storage': PermissionStatus.denied,
-    'Location': PermissionStatus.denied,
-  };
-
-  @override
-  void initState() {
-    super.initState();
-    defaultStatus = settingsBox.get('defaultStatus', defaultValue: 'Success');
-    fetchDeviceInfo();
-    checkPermissions();
-  }
-
-  Future<void> fetchDeviceInfo() async {
-    try {
-      final model = await _channel.invokeMethod<String>('getDeviceModel');
-      final version = await _channel.invokeMethod<String>('getAndroidVersion');
-
-      setState(() {
-        deviceModel = model ?? 'Unknown';
-        androidVersion = version ?? 'Unknown';
-        isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        deviceModel = 'Unavailable';
-        androidVersion = 'Unavailable';
-        isLoading = false;
-      });
-    }
-  }
-
-  Future<void> checkPermissions() async {
-    permissions['Camera'] = await Permission.camera.status;
-    permissions['Storage'] = await Permission.storage.status;
-    permissions['Location'] = await Permission.location.status;
-    setState(() {});
-  }
-
-  void saveDefaultStatus(String status) {
-    setState(() => defaultStatus = status);
-    settingsBox.put('defaultStatus', status);
-  }
-
-  void clearLogs() async {
-    final logsBox = Hive.box('logs');
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Confirm Clear Logs'),
-        content: const Text('Are you sure you want to delete all logs?'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-          TextButton(
-              onPressed: () {
-                logsBox.clear();
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('All logs cleared!')),
-                );
-              },
-              child: const Text('Clear', style: TextStyle(color: Colors.red))
+          ElevatedButton.icon(
+            icon: const Icon(Icons.settings),
+            label: const Text("Open App Settings"),
+            onPressed: openAppSettings,
           ),
         ],
-      ),
-    );
-  }
-
-  Widget permissionTile(String name, PermissionStatus status) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: ListTile(
-        leading: Icon(
-          status.isGranted ? Icons.check_circle : Icons.cancel,
-          color: status.isGranted ? Colors.green : Colors.red,
-        ),
-        title: Text(name),
-        subtitle: Text(status.toString().split('.').last),
-      ),
-    );
-  }
-
-  Widget settingsTile(String title, String value, IconData icon) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      child: ListTile(
-        leading: Icon(icon, color: Colors.blue),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(value),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Settings'), centerTitle: true),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-        padding: const EdgeInsets.all(16),
-        child: ListView(
-          children: [
-            settingsTile('Device Model', deviceModel, Icons.phone_android),
-            const SizedBox(height: 12),
-            settingsTile('Android Version', androidVersion, Icons.android),
-            const SizedBox(height: 20),
-            Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-              child: SwitchListTile(
-                title: const Text('Dark Mode', style: TextStyle(fontWeight: FontWeight.bold)),
-                secondary: const Icon(Icons.dark_mode, color: Colors.blue),
-                value: widget.isDarkMode,
-                onChanged: widget.onThemeChanged,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-              child: ListTile(
-                leading: const Icon(Icons.list_alt, color: Colors.blue),
-                title: const Text('Default Log Status', style: TextStyle(fontWeight: FontWeight.bold)),
-                trailing: DropdownButton<String>(
-                  value: defaultStatus,
-                  items: statuses.map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
-                  onChanged: (value) {
-                    if (value != null) saveDefaultStatus(value);
-                  },
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            const Text('Permissions', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-            const SizedBox(height: 10),
-            ...permissions.entries.map((e) => permissionTile(e.key, e.value)),
-            const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: clearLogs,
-              icon: const Icon(Icons.delete),
-              label: const Text('Clear Logs'),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            ),
-            const SizedBox(height: 20),
-            const Text('App Info', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-            const SizedBox(height: 10),
-            const Text('CyberLog v1.0.0'),
-            const Text('Build: 1.0.0'),
-            const Text('Developer: Devansh'),
-          ],
-        ),
       ),
     );
   }
